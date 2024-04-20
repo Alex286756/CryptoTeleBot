@@ -19,9 +19,12 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test
       run: |
-        python -m coverage run -m unittest
-        python -m coverage json -o ./coverage/coverage-temp.json
-        wget -O json-convert.py https://raw.githubusercontent.com/Alex286756/testing/main/json-convert.py
-        python json-convert.py
+          if [ -d tests ]; then
+            python -m coverage run -m unittest
+            python -m coverage json -o ./coverage/coverage-temp.json
+            wget -O json-convert.py https://raw.githubusercontent.com/Alex286756/testing/main/json-convert.py
+            python json-convert.py
+          fi
     - name: Update Coverage Badge
+      if: ${{ hashFiles('test') != '' }}
       uses: we-cli/coverage-badge-action@main
