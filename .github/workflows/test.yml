@@ -26,5 +26,5 @@ jobs:
             python json-convert.py
           fi
     - name: Update Coverage Badge
-      if: ${{ hashFiles('test') != '' }}
+      if: ${{ hashFiles('tests') != '' }}
       uses: we-cli/coverage-badge-action@main
