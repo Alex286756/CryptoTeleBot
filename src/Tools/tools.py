@@ -1,38 +1,8 @@
 import os
-from tkinter import filedialog
 from steganocryptopy.steganography import Steganography as StegoCript
 
 
-def load_image_file(field_name):
-    """
-    Запускает окно, предлагающее открыть файл с изображением.
-    :param field_name:
-        Поле, в которое будет записано имя открываемого файла.
-    """
-    filetypes = (("Изображение", "*.jpg *.bmp *.png"),)
-    filename = filedialog.askopenfilename(title="Выберите исходный файл с изображением",
-                                          initialdir="/",
-                                          filetypes=filetypes)
-    if filename:
-        field_name.set(filename)
-
-
-def load_message_file(field_name):
-    """
-    Запускает окно, предлагающее открыть файл с текстом.
-    :param field_name:
-        Поле, в которое будет записано имя открываемого файла.
-    """
-    filetypes = (("Текстовый файл", "*.txt"),
-                 ("Любой", "*"))
-    filename = filedialog.askopenfilename(title="Выберите исходный файл с сообщением",
-                                          initialdir=os.getcwd(),
-                                          filetypes=filetypes)
-    if filename:
-        field_name.set(filename)
-
-
-def get_new_filename():
+def get_new_filename(extension):
     """
     Генерирует имя файла (несуществующего).
     :return:
@@ -40,22 +10,23 @@ def get_new_filename():
     """
     filename = 'temp'
     index = 1
-    new_filename = filename + str(index) + '.txt'
+    new_filename = filename + str(index) + '.' + extension
     while os.path.isfile(new_filename):
         index += 1
-        new_filename = filename + str(index) + '.txt'
+        new_filename = filename + str(index) + '.' + extension
     return new_filename
 
 
-def write_bytes_to_file(input_bytes):
+def write_bytes_to_file(input_bytes, extension):
     """
     Pаписывает набор байтов в файл.
+    :param extension:
     :param input_bytes:
         Байты для записи
     :return:
         Имя файла
     """
-    message_filename = get_new_filename()
+    message_filename = get_new_filename(extension)
     with open(message_filename, "wb") as f:
         f.write(input_bytes)
     return message_filename
@@ -69,7 +40,7 @@ def write_message_to_file(input_text):
     :return:
         Имя файла с текстом
     """
-    message_filename = get_new_filename()
+    message_filename = get_new_filename('txt')
     with open(message_filename, "w", encoding='utf-8') as f:
         f.write(input_text)
     return message_filename
@@ -91,18 +62,3 @@ def key_generate(filename):
         key_filename = filename + ".key"
     StegoCript.generate_key(key_filename)
     return key_filename
-
-
-def get_key_filename(field_name):
-    """
-    Запускает окно, предлагающее открыть файл с ключом.
-    :param field_name:
-        Поле, в которое будет записано имя открываемого файла.
-    """
-    filetypes = (("Файлы с ключом", "*.key"),
-                 ("Любой", "*"))
-    filename = filedialog.askopenfilename(title="Выберите файл с ключом",
-                                          initialdir="/",
-                                          filetypes=filetypes)
-    if filename:
-        field_name.set(filename)
