@@ -108,19 +108,20 @@ class AbstractCrypto:
         :param old_text:
             Текст сообщения, поступившего на обработку.
         """
-        if self.key is None:
-            is_lang_definition = True
-            char_index = 0
-            while is_lang_definition and char_index < len(old_text):
-                char = old_text[char_index]
-                if char.lower() in self.alphabets[0]:
+        is_lang_definition = True
+        char_index = 0
+        while is_lang_definition and char_index < len(old_text):
+            char = old_text[char_index]
+            if char.lower() in self.alphabets[0]:
+                if self.key is None:
                     self.key = 'шефвзъярентчкщипцысэхомгудбайжюль'
-                    self.alphabets.pop(2)
-                    self.alphabets.pop(2)
-                    is_lang_definition = False
-                elif char.lower() in self.alphabets[2][:26]:
+                self.alphabets.pop(2)
+                self.alphabets.pop(2)
+                is_lang_definition = False
+            elif char.lower() in self.alphabets[2][:26]:
+                if self.key is None:
                     self.key = 'thefiveboxingwizardsjumpquickly'
-                    self.alphabets.pop(0)
-                    self.alphabets.pop(0)
-                    is_lang_definition = False
-                char_index += 1
+                self.alphabets.pop(0)
+                self.alphabets.pop(0)
+                is_lang_definition = False
+            char_index += 1

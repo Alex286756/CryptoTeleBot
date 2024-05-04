@@ -9,8 +9,7 @@ from src.Crypto import Caesar, Vijener, Vernam
 from src.Hacking import CaesarHack
 from src.MyTelebot.constants import Constants
 from src.Steganography import BMPChange, JPGChange, PNGChange
-from src.Tools import write_bytes_to_file, write_message_to_file
-from src.Tools.tools import get_new_filename, key_generate
+from src.Tools import write_bytes_to_file, write_message_to_file, get_new_filename, key_generate
 
 """
 Инициализация необходимых режимов
@@ -70,7 +69,7 @@ def help_message(message):
                               "шифрами Цезаря, Виженера, Вернама, а также зашифрования/расшифрования "
                               "сообщений внутри bmp-, jpg-, png-изображений. Кроме того, в качестве фан-бонуса "
                               "он умеет взламывать шифр Цезаря, т.е. при отсутствии ключа восстановить "
-                              "исходное сообщение." )
+                              "исходное сообщение.")
     bot.send_message(chat_id, "В рамках проекта имеются несколько ограничений. ")
     bot.send_message(chat_id, "1. Шифрование/расшифрование текстовых сообщений внутри изображений "
                               "осуществляется только текста на английском языке.")
@@ -164,18 +163,20 @@ def get_key_for_textcode(message):
         Содержит данные сообщения, откуда пришел вызов.
     """
     global key, code
-    coding = code(key)
+    coding = code()
     chat_id = message.chat.id
     if isinstance(coding, Caesar):
-        if message.text.isdigit():
-            key = int(message.text)
+        key_digits = ''.join([i for i in message.text if i.isdigit()])
+        if len(key_digits):
+            key = int(key_digits)
             bot.send_message(chat_id,
                              'Теперь введите сообщение для обработки вручную или пришлите файл в формате txt')
         else:
             bot.send_message(chat_id, 'Нужно ввести просто число!')
     elif isinstance(coding, Vijener) or isinstance(coding, Vernam):
-        if message.text.isalpha():
-            key = message.text
+        key_letters = ''.join([c for c in message.text if c.isalpha()])
+        if len(key_letters):
+            key = key_letters
             bot.send_message(chat_id,
                              'Теперь введите сообщение для обработки вручную или пришлите файл в формате txt')
         else:
@@ -208,9 +209,12 @@ def get_file_with_key_for_textcode(message):
     if isinstance(coding, Caesar):
         res = ''.join([el for el in input_key if el.isdigit()])
         key = int(res)
+        bot.send_message(chat_id,
+                         'Теперь введите сообщение для обработки вручную или пришлите файл в формате txt')
     elif isinstance(coding, Vijener) or isinstance(coding, Vernam):
-        res = ''.join([el for el in input_key if el.isalpha()])
-        key = int(res)
+        key = ''.join([el for el in input_key if el.isalpha()])
+        bot.send_message(chat_id,
+                         'Теперь введите сообщение для обработки вручную или пришлите файл в формате txt')
     else:
         bot.send_message(chat_id, 'Что-то пошло не так (не определен шифр для обработки текста).'
                                   'Давайте начнем сначала? Нажмите /start')
@@ -860,7 +864,7 @@ def get_text_for_hacking(message):
 
 
 @bot.message_handler(content_types=['document'])
-def get_documents_messages(message):
+def get_other_document(message):
     """
         Метод выполняетсяв в случае получения файла, неподпадающегося под более ранние фильтры.
     :param message:
@@ -871,7 +875,7 @@ def get_documents_messages(message):
 
 
 @bot.message_handler(content_types=['photo'])
-def get_documents_messages(message):
+def get_photo(message):
     """
         Метод выполняетсяв в случае получения сжатого изображения.
     :param message:
@@ -881,7 +885,7 @@ def get_documents_messages(message):
 
 
 @bot.message_handler(content_types=['text'])
-def text(message):
+def get_text(message):
     """
         Метод выполняетсяв в случае получения сообщения с клавиатуры, неподпадающегося под более ранние фильтры.
     :param message:
