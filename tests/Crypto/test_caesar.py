@@ -17,10 +17,10 @@ class TestCaesar(unittest.TestCase):
         self.assertEqual(Caesar(2).get_new_char('d', Caesar.DECODE), 'b')
 
     def test_get_new_char_rus_encode(self):
-        self.assertEqual(Caesar(1).get_new_char('Я', Caesar.ENCODE), 'А')
+        self.assertEqual(Caesar(1).get_new_char('Я', Caesar.ENCODE), 'Ё')
 
     def test_get_new_char_rus_decode(self):
-        self.assertEqual(Caesar(2).get_new_char('ж', Caesar.DECODE), 'е')
+        self.assertEqual(Caesar(2).get_new_char('ж', Caesar.DECODE), 'д')
 
     def test_get_new_char_not_letter_encode(self):
         self.assertEqual(Caesar(1).get_new_char('@', Caesar.ENCODE), '@')

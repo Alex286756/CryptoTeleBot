@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from src.MyTelebot.constants import Constants
+from src.Tools.constants import Constants
 
 
 class AbstractCrypto:

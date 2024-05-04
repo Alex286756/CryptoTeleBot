@@ -9,7 +9,7 @@ from telebot import types
 
 from src.Crypto import Caesar, Vijener, Vernam
 from src.Hacking import CaesarHack
-from src.MyTelebot.constants import Constants
+from src.Tools.constants import Constants
 from src.Steganography import BMPChange, JPGChange, PNGChange
 from src.Tools import write_bytes_to_file, write_message_to_file, get_new_filename, key_generate
 

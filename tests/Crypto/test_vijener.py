@@ -41,33 +41,33 @@ class TestVijener(unittest.TestCase):
 
     def test_get_new_char_without_key_rus_encode(self):
         self.vijener_without_key.check_key("Салют")
-        self.assertEqual(self.vijener_without_key.get_new_char('С', Vijener.ENCODE), 'Й')
+        self.assertEqual(self.vijener_without_key.get_new_char('С', Vijener.ENCODE), 'И')
         self.assertEqual(self.vijener_without_key.get_new_char('а', Vijener.ENCODE), 'е')
-        self.assertEqual(self.vijener_without_key.get_new_char('л', Vijener.ENCODE), 'а')
-        self.assertEqual(self.vijener_without_key.get_new_char('ю', Vijener.ENCODE), 'а')
-        self.assertEqual(self.vijener_without_key.get_new_char('т', Vijener.ENCODE), 'ъ')
+        self.assertEqual(self.vijener_without_key.get_new_char('л', Vijener.ENCODE), 'я')
+        self.assertEqual(self.vijener_without_key.get_new_char('ю', Vijener.ENCODE), 'ё')
+        self.assertEqual(self.vijener_without_key.get_new_char('т', Vijener.ENCODE), 'щ')
 
     def test_get_new_char_with_key_rus_encode(self):
-        self.assertEqual(self.vijener_with_key_rus.get_new_char('С', Vijener.ENCODE), 'П')
+        self.assertEqual(self.vijener_with_key_rus.get_new_char('С', Vijener.ENCODE), 'О')
         self.assertEqual(self.vijener_with_key_rus.get_new_char('а', Vijener.ENCODE), 'и')
-        self.assertEqual(self.vijener_with_key_rus.get_new_char('л', Vijener.ENCODE), 'т')
-        self.assertEqual(self.vijener_with_key_rus.get_new_char('ю', Vijener.ENCODE), 'о')
-        self.assertEqual(self.vijener_with_key_rus.get_new_char('т', Vijener.ENCODE), 'н')
+        self.assertEqual(self.vijener_with_key_rus.get_new_char('л', Vijener.ENCODE), 'с')
+        self.assertEqual(self.vijener_with_key_rus.get_new_char('ю', Vijener.ENCODE), 'н')
+        self.assertEqual(self.vijener_with_key_rus.get_new_char('т', Vijener.ENCODE), 'м')
 
     def test_get_new_char_without_key_rus_decode(self):
         self.vijener_without_key.check_key("Йуааъ")
-        self.assertEqual(self.vijener_without_key.get_new_char('Й', Vijener.DECODE), 'С')
+        self.assertEqual(self.vijener_without_key.get_new_char('Й', Vijener.DECODE), 'Т')
         self.assertEqual(self.vijener_without_key.get_new_char('е', Vijener.DECODE), 'а')
-        self.assertEqual(self.vijener_without_key.get_new_char('а', Vijener.DECODE), 'л')
-        self.assertEqual(self.vijener_without_key.get_new_char('а', Vijener.DECODE), 'ю')
-        self.assertEqual(self.vijener_without_key.get_new_char('ъ', Vijener.DECODE), 'т')
+        self.assertEqual(self.vijener_without_key.get_new_char('а', Vijener.DECODE), 'н')
+        self.assertEqual(self.vijener_without_key.get_new_char('а', Vijener.DECODE), 'я')
+        self.assertEqual(self.vijener_without_key.get_new_char('ъ', Vijener.DECODE), 'у')
 
     def test_get_new_char_with_key_rus_decode(self):
-        self.assertEqual(self.vijener_with_key_rus.get_new_char('П', Vijener.DECODE), 'С')
+        self.assertEqual(self.vijener_with_key_rus.get_new_char('П', Vijener.DECODE), 'Т')
         self.assertEqual(self.vijener_with_key_rus.get_new_char('и', Vijener.DECODE), 'а')
-        self.assertEqual(self.vijener_with_key_rus.get_new_char('т', Vijener.DECODE), 'л')
-        self.assertEqual(self.vijener_with_key_rus.get_new_char('о', Vijener.DECODE), 'ю')
-        self.assertEqual(self.vijener_with_key_rus.get_new_char('н', Vijener.DECODE), 'т')
+        self.assertEqual(self.vijener_with_key_rus.get_new_char('т', Vijener.DECODE), 'м')
+        self.assertEqual(self.vijener_with_key_rus.get_new_char('о', Vijener.DECODE), 'я')
+        self.assertEqual(self.vijener_with_key_rus.get_new_char('н', Vijener.DECODE), 'у')
 
     def test_get_new_char_not_letter_encode(self):
         self.assertEqual(self.vijener_without_key.get_new_char('@@@@', Vijener.ENCODE), '@@@@')

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from src.Abstract import AbstractCrypto
-from src.MyTelebot.constants import Constants
+from src.Tools.constants import Constants
 
 
 class Vernam(AbstractCrypto):
