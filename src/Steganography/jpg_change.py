@@ -15,7 +15,7 @@ class JPGChange(AbstractImages):
         Запуск процесса расшифрования сообщения из файла изображения.
     """
 
-    def encoding(self, message_filename):
+    def encoding(self, message_filename: str) -> str:
         """
         Осуществляет шифрование сообщения в файл с изображением.
 
@@ -29,7 +29,7 @@ class JPGChange(AbstractImages):
         exifHeader.hide(self.in_filename, self.out_filename, text)
         return self.out_filename
 
-    def decoding(self):
+    def decoding(self) -> str:
         """
         Осуществляет получение текстового сообщения из файла с изображением и сохраняет его в файл.
 

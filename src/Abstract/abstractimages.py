@@ -1,3 +1,6 @@
+from src.MyTelebot.constants import Constants
+
+
 class AbstractImages:
     """
     Абстрактный класс для создания классов, реализующих шифры Цезаря, Виженера и Вернама. \n
@@ -25,7 +28,7 @@ class AbstractImages:
         Возвращает имя файла, где будет записано расщифрованное сообщение.
     """
 
-    def __init__(self, input_filename: str, key_filename: str = "private.key"):
+    def __init__(self, input_filename: str, key_filename: str = Constants.DEFAULT_KEY_FILENAME):
         """
         Инициализация начальных атрибутов
         :param input_filename:
@@ -38,7 +41,7 @@ class AbstractImages:
         self.out_filename = input_filename[:len(input_filename)-4] + "_out" + input_filename[len(input_filename)-4:]
         self.key_filename = key_filename
 
-    def encoding(self, message_filename):
+    def encoding(self, message_filename: str) -> str:
         """
         Абстрактный метод, реализация которого будет зависеть от конкретного шифра.
         :param message_filename:
@@ -48,7 +51,7 @@ class AbstractImages:
         """
         raise NotImplementedError("Subclasses must implement encoding")
 
-    def decoding(self):
+    def decoding(self) -> str:
         """
         Абстрактный метод, реализация которого будет зависеть от конкретного шифра.
         :return:
@@ -56,7 +59,7 @@ class AbstractImages:
         """
         raise NotImplementedError("Subclasses must implement decoding")
 
-    def get_decode_filename(self):
+    def get_decode_filename(self) -> str:
         """
         По имение файла, записанному в атрибуте in_filename генерирует имя файла, в который будет
         записан результат расшифровки изображения.

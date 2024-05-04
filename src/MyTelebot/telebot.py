@@ -1,5 +1,7 @@
 import os
 import zlib
+from typing import Optional, Union
+from dotenv import load_dotenv
 
 from cryptography.fernet import InvalidToken
 import telebot
@@ -14,19 +16,19 @@ from src.Tools import write_bytes_to_file, write_message_to_file, get_new_filena
 """
 Инициализация необходимых режимов
 """
-target = None
-source = None
-input_text = None
-code = Caesar
-key = None
-need_key_file = False
-key_filename = 'private.key'
+target: Optional[str] = None
+source: Optional[str] = None
+input_text: str = ''
+code: type = Caesar
+key: Optional[Union[int, str]] = None
+need_key_file: bool = False
+key_filename: str = Constants.DEFAULT_KEY_FILENAME
 
 """
-Инициализация Телеграм-бота по токену, записанному в файле token.txt
+Инициализация Телеграм-бота по токену, находящемуся в переменных окружения
 """
-with open('token.txt') as f:
-    token = f.readline().strip()
+load_dotenv()
+token = os.getenv('TELEGRAM_TOKEN')
 bot = telebot.TeleBot(token)
 
 
@@ -42,10 +44,11 @@ def start_message(message):
     global target, source, code, input_text, key, need_key_file, key_filename
     target = None
     source = None
-    input_text = None
+    input_text = ''
+    code = Caesar
     key = None
     need_key_file = False
-    key_filename = 'private.key'
+    key_filename = Constants.DEFAULT_KEY_FILENAME
     chat_id = message.chat.id
     first_name = message.chat.first_name
     inline_markup = types.InlineKeyboardMarkup(row_width=True)
@@ -81,7 +84,7 @@ def help_message(message):
     bot.send_message(chat_id, "Для старта работы напишите /start")
 
 
-def sources_menu(chat_id, message_id, dist):
+def sources_menu(chat_id: int, message_id: int, dist: str) -> None:
     """
         Метод выводит в чат возможные варианты исходных данных для обработки
     :param chat_id:
@@ -169,16 +172,14 @@ def get_key_for_textcode(message):
         key_digits = ''.join([i for i in message.text if i.isdigit()])
         if len(key_digits):
             key = int(key_digits)
-            bot.send_message(chat_id,
-                             'Теперь введите сообщение для обработки вручную или пришлите файл в формате txt')
+            bot.send_message(chat_id, Constants.INPUT_TEXT_MESSAGE)
         else:
             bot.send_message(chat_id, 'Нужно ввести просто число!')
     elif isinstance(coding, Vijener) or isinstance(coding, Vernam):
         key_letters = ''.join([c for c in message.text if c.isalpha()])
         if len(key_letters):
             key = key_letters
-            bot.send_message(chat_id,
-                             'Теперь введите сообщение для обработки вручную или пришлите файл в формате txt')
+            bot.send_message(chat_id, Constants.INPUT_TEXT_MESSAGE)
         else:
             bot.send_message(chat_id, 'Нужно ввести просто набор символов того алфавита, '
                                       'на котором написано сообщение!')
@@ -209,12 +210,10 @@ def get_file_with_key_for_textcode(message):
     if isinstance(coding, Caesar):
         res = ''.join([el for el in input_key if el.isdigit()])
         key = int(res)
-        bot.send_message(chat_id,
-                         'Теперь введите сообщение для обработки вручную или пришлите файл в формате txt')
+        bot.send_message(chat_id, Constants.INPUT_TEXT_MESSAGE)
     elif isinstance(coding, Vijener) or isinstance(coding, Vernam):
         key = ''.join([el for el in input_key if el.isalpha()])
-        bot.send_message(chat_id,
-                         'Теперь введите сообщение для обработки вручную или пришлите файл в формате txt')
+        bot.send_message(chat_id, Constants.INPUT_TEXT_MESSAGE)
     else:
         bot.send_message(chat_id, 'Что-то пошло не так (не определен шифр для обработки текста).'
                                   'Давайте начнем сначала? Нажмите /start')
@@ -249,7 +248,7 @@ def get_file_for_textcode(message):
     bot.send_document(chat_id, result.encode('utf-8'), visible_file_name=result_filename)
     if os.path.exists(result_filename):
         os.remove(result_filename)
-    bot.send_message(chat_id, 'Для того, чтобы начать работать сначала, нажмите /start')
+    bot.send_message(chat_id, Constants.RESTART_MESSAGE)
 
 
 @bot.message_handler(content_types=['text'],
@@ -275,7 +274,7 @@ def get_text_for_textcode(message):
         result = coding.encoding(message.text)
     bot.send_message(chat_id, 'Вот результат обработки сообщения:')
     bot.send_message(chat_id, result)
-    bot.send_message(chat_id, 'Для того, чтобы начать работать сначала, нажмите /start')
+    bot.send_message(chat_id, Constants.RESTART_MESSAGE)
 
 
 @bot.callback_query_handler(func=lambda call: call.data == Constants.CAESAR)
@@ -337,7 +336,7 @@ def set_code_to_vernam(call):
                               'буквы):')
 
 
-def steganography_start(chat_id, file_type):
+def steganography_start(chat_id: int, file_type: str) -> None:
     """
         Выдает в чат предложение прислать изображение в качестве исходного для обработки.
     :param chat_id:
@@ -443,8 +442,7 @@ def get_bmp_image(message):
             except IndexError:
                 bot.send_message(chat_id, 'Сообщение найти не удалось, к сожалению...')
             finally:
-                bot.send_message(chat_id, 'Для того, чтобы начать работать сначала, нажмите /start',
-                                 reply_markup=types.ReplyKeyboardRemove())
+                bot.send_message(chat_id, Constants.RESTART_MESSAGE, reply_markup=types.ReplyKeyboardRemove())
         elif target == Constants.ENCODE:
             result_filename = bmp.encoding(input_text)
             with open(result_filename, "rb") as f_out:
@@ -453,9 +451,8 @@ def get_bmp_image(message):
                 bot.send_document(chat_id, result_message, visible_file_name=result_filename)
             os.remove(result_filename)
             os.remove(str(input_text))
-            input_text = None
-            bot.send_message(chat_id, 'Для того, чтобы начать работать сначала, нажмите /start',
-                             reply_markup=types.ReplyKeyboardRemove())
+            input_text = ''
+            bot.send_message(chat_id, Constants.RESTART_MESSAGE, reply_markup=types.ReplyKeyboardRemove())
         os.remove(file_in_filename)
     else:
         match source:
@@ -563,8 +560,7 @@ def get_jpg_image(message):
             except zlib.error:
                 bot.send_message(chat_id, 'Сообщение найти не удалось, к сожалению...')
             finally:
-                bot.send_message(chat_id, 'Для того, чтобы начать работать сначала, нажмите /start',
-                                 reply_markup=types.ReplyKeyboardRemove())
+                bot.send_message(chat_id, Constants.RESTART_MESSAGE, reply_markup=types.ReplyKeyboardRemove())
         elif target == Constants.ENCODE:
             result_filename = jpg.encoding(input_text)
             with open(result_filename, "rb") as f_out:
@@ -573,8 +569,7 @@ def get_jpg_image(message):
                 bot.send_document(chat_id, result_message, visible_file_name=result_filename)
             os.remove(result_filename)
             os.remove(str(input_text))
-            bot.send_message(chat_id, 'Для того, чтобы начать работать сначала, нажмите /start',
-                             reply_markup=types.ReplyKeyboardRemove())
+            bot.send_message(chat_id, Constants.RESTART_MESSAGE, reply_markup=types.ReplyKeyboardRemove())
         os.remove(file_in_filename)
     else:
         match source:
@@ -615,7 +610,7 @@ def set_source_to_png(call):
                                   'Начните сначала, пожалуйста, с команды /start')
 
 
-def get_key_menu(chat_id):
+def get_key_menu(chat_id: int) -> None:
     """
         Предлагает пользователю ввести ключ вручную или прислать ключ файлом.
 
@@ -635,15 +630,14 @@ def get_key_menu(chat_id):
 @bot.message_handler(func=lambda message: need_key_file and message.text == 'Использовать ключ по умолчанию')
 def use_default_key_for_png(message):
     """
-        Вызывается в случае использования ключа по умолчанию (находится в файле private.key)
-    для работы с png-изображением.
+        Вызывается в случае использования ключа по умолчанию для работы с png-изображением.
     :param message:
         Содержит данные сообщения, откуда пришел вызов.
     """
     global need_key_file, key_filename
 
     chat_id = message.chat.id
-    key_filename = 'private.key'
+    key_filename = Constants.DEFAULT_KEY_FILENAME
     need_key_file = False
     with open(key_filename, 'rb') as f_key:
         key_file = f_key.read()
@@ -763,8 +757,7 @@ def get_png_image(message):
             except InvalidToken:
                 bot.send_message(chat_id, 'Сообщение найти не удалось, к сожалению...')
             finally:
-                bot.send_message(chat_id, 'Для того, чтобы начать работать сначала, нажмите /start',
-                                 reply_markup=types.ReplyKeyboardRemove())
+                bot.send_message(chat_id, Constants.RESTART_MESSAGE, reply_markup=types.ReplyKeyboardRemove())
         elif target == Constants.ENCODE:
             result_filename = png.encoding(input_text)
             with open(result_filename, "rb") as f_out:
@@ -773,9 +766,8 @@ def get_png_image(message):
                 bot.send_document(chat_id, result_message, visible_file_name=result_filename)
             os.remove(result_filename)
             os.remove(str(input_text))
-            bot.send_message(chat_id, 'Для того, чтобы начать работать сначала, нажмите /start',
-                             reply_markup=types.ReplyKeyboardRemove())
-        if key_filename != 'private.key':
+            bot.send_message(chat_id, Constants.RESTART_MESSAGE, reply_markup=types.ReplyKeyboardRemove())
+        if key_filename != Constants.DEFAULT_KEY_FILENAME:
             os.remove(key_filename)
         os.remove(file_in_filename)
     else:
@@ -831,8 +823,7 @@ def get_file_for_hacking(message):
     except Exception as e:
         bot.reply_to(message, e.__str__())
     finally:
-        bot.send_message(chat_id, 'Для того, чтобы начать работать сначала, нажмите /start',
-                         reply_markup=types.ReplyKeyboardRemove())
+        bot.send_message(chat_id, Constants.RESTART_MESSAGE, reply_markup=types.ReplyKeyboardRemove())
 
 
 @bot.message_handler(content_types=['text'], func=lambda message: target == Constants.HACKING)
@@ -859,8 +850,7 @@ def get_text_for_hacking(message):
     except Exception as e:
         bot.reply_to(message, e.__str__())
     finally:
-        bot.send_message(chat_id, 'Для того, чтобы начать работать сначала, нажмите /start',
-                         reply_markup=types.ReplyKeyboardRemove())
+        bot.send_message(chat_id, Constants.RESTART_MESSAGE, reply_markup=types.ReplyKeyboardRemove())
 
 
 @bot.message_handler(content_types=['document'])
@@ -895,7 +885,7 @@ def get_text(message):
     bot.send_message(chat_id, 'Я чего-то Вас не понимаю... Для получения справки введите /help')
 
 
-def run_telebot():
+def run_telebot() -> None:
     """
     Запуск бота.
     """

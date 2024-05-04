@@ -15,7 +15,7 @@ class PNGChange(AbstractImages):
         Запуск процесса расшифрования сообщения из файла изображения.
     """
 
-    def encoding(self, message_filename):
+    def encoding(self, message_filename: str) -> str:
         """
         Осуществляет шифрование сообщения в файл с изображением (используется файл с ключом).
 
@@ -28,7 +28,7 @@ class PNGChange(AbstractImages):
         secret.save(self.out_filename)
         return self.out_filename
 
-    def decoding(self):
+    def decoding(self) -> str:
         """
         Осуществляет получение текстового сообщения из файла с изображением и сохраняет его в файл.
 

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from src.Abstract import AbstractCrypto
 
 
@@ -17,7 +19,7 @@ class Caesar(AbstractCrypto):
             Вычисляет результат шифрования/расшифрования символа.
     """
 
-    def __init__(self, key: int = None):
+    def __init__(self, key: Optional[int] = None):
         """
         Устанавливает начальные атрибуты.
         Если ключ не задан, то присваивается ключ, равный 3.
@@ -52,8 +54,8 @@ class Caesar(AbstractCrypto):
                 return alphabet[(alphabet.index(old_char) + rotation * self.key) % len(alphabet)]
         return old_char
 
-    def check_key(self, old_text: str):
+    def check_key(self, old_text: str) -> None:
         """
-        Перегружает абстрактный метод, т.к. для шифра Цезаря проверка длины ключа не производится.
+        Перегружает абстрактный метод, т.к. для шифра Цезаря определение алфавита не требуется.
         """
         pass

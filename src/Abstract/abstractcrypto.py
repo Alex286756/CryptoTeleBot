@@ -1,3 +1,8 @@
+from typing import Optional, Union
+
+from src.MyTelebot.constants import Constants
+
+
 class AbstractCrypto:
     """
     Абстрактный класс для создания классов, реализующих шифры Цезаря, Виженера и Вернама. \n
@@ -35,21 +40,21 @@ class AbstractCrypto:
     ENCODE = 1
     DECODE = -1
 
-    def __init__(self, key: any = None):
+    def __init__(self, key: Optional[Union[int, str]] = None):
         """
         Инициализация начальных параметров.
         :param key:
             Ключ для шифрования/расшифрования.
         """
         self.alphabets = []
-        self.alphabets.append('абвгдеёжзийклмнопрстуфхцчшщъыьэюя')
-        self.alphabets.append('АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ')
-        self.alphabets.append('abcdefghijklmnopqrstuvwxyz')
-        self.alphabets.append('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+        self.alphabets.append(Constants.ALPHABET_RUS_LOWER + 'ё')
+        self.alphabets.append(Constants.ALPHABET_RUS_UPPER + 'Ё')
+        self.alphabets.append(Constants.ALPHABET_ENG_LOWER)
+        self.alphabets.append(Constants.ALPHABET_ENG_UPPER)
         self.key_index = -1
         self.key = key
 
-    def get_new_char(self, old_char, rotation):
+    def get_new_char(self, old_char: str, rotation: int) -> str:
         """
         Абстрактный метод, реализация которого будет зависеть от конкретного шифра.
         :param old_char:
@@ -61,7 +66,7 @@ class AbstractCrypto:
         """
         raise NotImplementedError("Subclasses must implement get new char")
 
-    def get_new_text(self, old_text, rotation):
+    def get_new_text(self, old_text: str, rotation: int) -> str:
         """
         Обработка сообщения с использованием шифра путем посимвольного шифрования/расшифрования.
         :param old_text:
@@ -78,7 +83,7 @@ class AbstractCrypto:
             new_text += self.get_new_char(char, rotation)
         return new_text
 
-    def encoding(self, text):
+    def encoding(self, text: str) -> str:
         """
         Запуск шифрования.
         :param text:
@@ -88,7 +93,7 @@ class AbstractCrypto:
         """
         return self.get_new_text(text, self.ENCODE)
 
-    def decoding(self, text):
+    def decoding(self, text: str) -> str:
         """
         Запуск расшифрования.
         :param text:

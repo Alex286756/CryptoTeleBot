@@ -2,9 +2,11 @@ import os
 from steganocryptopy.steganography import Steganography as StegoCript
 
 
-def get_new_filename(extension):
+def get_new_filename(extension: str) -> str:
     """
     Генерирует имя файла (несуществующего).
+    :param extension:
+        Расширение, которое должен иметь файл
     :return:
         Имя файла
     """
@@ -17,12 +19,13 @@ def get_new_filename(extension):
     return new_filename
 
 
-def write_bytes_to_file(input_bytes, extension):
+def write_bytes_to_file(input_bytes: bytes, extension: str) -> str:
     """
-    Pаписывает набор байтов в файл.
-    :param extension:
+        Записывает набор байтов в файл.
     :param input_bytes:
         Байты для записи
+    :param extension:
+        Расширение, которое должен иметь файл
     :return:
         Имя файла
     """
@@ -32,7 +35,7 @@ def write_bytes_to_file(input_bytes, extension):
     return message_filename
 
 
-def write_message_to_file(input_text):
+def write_message_to_file(input_text: str) -> str:
     """
     Записывает текст в файл.
     :param input_text:
@@ -46,7 +49,7 @@ def write_message_to_file(input_text):
     return message_filename
 
 
-def key_generate(filename):
+def key_generate(filename: str) -> str:
     """
     Генерирует ключ для стеганографии и записывает его в файл.
 

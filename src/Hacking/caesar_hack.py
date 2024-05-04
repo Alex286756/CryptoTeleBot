@@ -1,4 +1,7 @@
+from typing import Optional
+
 from src.Crypto import Caesar
+from src.MyTelebot.constants import Constants
 from src.Tools import write_message_to_file
 
 
@@ -40,11 +43,11 @@ class CaesarHack:
         Данные по частотам букв взяты со следующего источника:
         http://www.statistica.ru/local-portals/data-mining/analiz-tekstov/
         """
-        self.alphabet = ['АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЭЮЯ',
-                         'ABCDEFGHIJKLMNOPQRSTUVWXYZ']
+        self.alphabet = [Constants.ALPHABET_RUS_UPPER_31,
+                         Constants.ALPHABET_ENG_UPPER]
         self.frequency = [[62, 14, 38, 13, 25, 72, 7, 16, 62, 10,
                            28, 35, 26, 53, 90, 23, 40, 45, 53, 21,
-                           2, 9, 4, 12, 6, 3, 14, 16, 3, 6,
+                           2, 9, 4, 12, 6, 3, 16, 14, 3, 6,
                            18],
                           [796, 160, 284, 401, 1286, 262, 199, 539, 777, 16,
                            41, 351, 243, 751, 662, 181, 17, 683, 662, 972,
@@ -52,7 +55,7 @@ class CaesarHack:
         self.alphabet_norm = [sum(self.frequency[0]), sum(self.frequency[1])]
         self.alphabet_index = -1
 
-    def caesar_hacker(self, filename: str):
+    def caesar_hacker(self, filename: str) -> Optional[str]:
         """
         Взламывает сообщение, зашифрованное шифром Цезаря (чем длиннее сообщение, тем точнее результат).
         :param filename:
@@ -77,7 +80,7 @@ class CaesarHack:
         decrypt_message = caesar.decoding(ciphertext)
         return write_message_to_file(decrypt_message)
 
-    def get_frequency(self, message):
+    def get_frequency(self, message: str) -> list[int]:
         """
         Вычисляет и нормализует частоты букв в предоставленном тексте.
         :param message: 
@@ -93,7 +96,7 @@ class CaesarHack:
             cipher_frequency[i] = cipher_frequency[i] * self.alphabet_norm[self.alphabet_index] // total_count
         return cipher_frequency
 
-    def calc_best_shift(self, cipher_frequency):
+    def calc_best_shift(self, cipher_frequency: list[int]) -> int:
         """
         Вычисляет наименьшую разницу между частотами букв в тексте и в исходных данных.
         :param cipher_frequency:
@@ -113,7 +116,7 @@ class CaesarHack:
                 best_shift = shift
         return best_shift
 
-    def set_language_index(self, text):
+    def set_language_index(self, text: str) -> None:
         """
         По первой букве в тексте сообщения определяет язык и устанавливает соответствующий alphabet_index.
         :param text:

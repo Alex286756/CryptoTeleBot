@@ -1,4 +1,7 @@
+from typing import Optional
+
 from src.Abstract import AbstractCrypto
+from src.MyTelebot.constants import Constants
 
 
 class Vernam(AbstractCrypto):
@@ -17,7 +20,7 @@ class Vernam(AbstractCrypto):
             Вычисляет результат шифрования/расшифрования символа.
     """
 
-    def __init__(self, key: any = None):
+    def __init__(self, key: Optional[str] = None):
         """
         С учетом того, что шифр Вернама работает побитово, для получения зрелищности в рамках проекта
         алфавиты сделаны размером в 32 символа (в русском алфавите убрана буква ё, к английскому алфавиту
@@ -27,10 +30,10 @@ class Vernam(AbstractCrypto):
             Ключ для шифрования/расшифрования.
         """
         super().__init__(key)
-        self.alphabets[0] = self.alphabets[0][:6] + self.alphabets[0][7:]
-        self.alphabets[1] = self.alphabets[1][:6] + self.alphabets[1][7:]
-        self.alphabets[2] = self.alphabets[2] + ' .,:;-'
-        self.alphabets[3] = self.alphabets[3] + ' .,:;-'
+        self.alphabets[0] = Constants.ALPHABET_RUS_LOWER
+        self.alphabets[1] = Constants.ALPHABET_RUS_UPPER
+        self.alphabets[2] = Constants.ALPHABET_ENG_LOWER + ' .,:;-'
+        self.alphabets[3] = Constants.ALPHABET_ENG_UPPER + ' .,:;-'
 
     def get_new_char(self, old_char: str, rotation: int) -> str:
         """
