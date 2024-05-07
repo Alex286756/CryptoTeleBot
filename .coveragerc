@@ -7,6 +7,8 @@ branch = True
 [report]
 precision = 2
 
+omit = src/MyTelebot/*
+
 ignore_errors = True
 
 [html]
