@@ -1,0 +1,16 @@
+[run]
+branch = True
+
+; source =
+;     /src/*
+
+[report]
+precision = 2
+
+omit = src/MyTelebot/*
+
+ignore_errors = True
+
+[html]
+directory = coverage_html_report
+; skip_covered = true
